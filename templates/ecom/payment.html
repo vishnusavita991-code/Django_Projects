@@ -1,0 +1,182 @@
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+
+{% block title %}Secure Payment | NEXUS Store{% endblock %}
+
+{% block content %}
+<div class="container-custom" style="padding-top: 20px; padding-bottom: 60px;">
+  <!-- Stepper -->
+  <div class="stepper-header">
+    <div class="step-item completed">
+      <div class="step-number"><i class="fa-solid fa-check"></i></div>
+      <span>Shopping Cart</span>
+    </div>
+    <div class="step-divider" style="background: var(--success);"></div>
+    <div class="step-item completed">
+      <div class="step-number"><i class="fa-solid fa-check"></i></div>
+      <span>Shipping Address</span>
+    </div>
+    <div class="step-divider" style="background: var(--primary);"></div>
+    <div class="step-item active">
+      <div class="step-number">3</div>
+      <span>Payment</span>
+    </div>
+  </div>
+
+  <div style="background: var(--info-light); border: 1px solid rgba(59,130,246,0.3); color: #1e40af; padding: 12px 20px; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+    <i class="fa-solid fa-circle-info"></i>
+    <span><strong>Sandbox Demo Mode:</strong> This is a secure demo checkout. No actual charges will occur. You can test with any mock card details or select UPI / Cash on Delivery.</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 380px; gap: 32px;">
+    <!-- Left: Payment Methods Selector -->
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-sm);">
+      <h2 style="font-size: 1.45rem; font-weight: 800; margin-bottom: 24px;">Choose Payment Method</h2>
+
+      <form action="/payment-success" method="post" id="paymentForm">
+        {% csrf_token %}
+        <!-- Payment Options Tabs -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px;">
+          <label style="border: 2px solid var(--primary); background: var(--primary-light); padding: 16px; border-radius: var(--radius-md); cursor: pointer; text-align: center; display: block;" id="cardOption">
+            <input type="radio" name="payment_method" value="Card / Online" checked onchange="switchPayment('card')" style="display: none;">
+            <i class="fa-solid fa-credit-card" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+            <span style="font-weight: 700; font-size: 0.875rem; color: var(--text-main);">Card</span>
+          </label>
+          <label style="border: 2px solid var(--border); background: var(--surface-alt); padding: 16px; border-radius: var(--radius-md); cursor: pointer; text-align: center; display: block;" id="upiOption">
+            <input type="radio" name="payment_method" value="UPI / QR" onchange="switchPayment('upi')" style="display: none;">
+            <i class="fa-solid fa-qrcode" style="font-size: 1.5rem; color: var(--text-muted); margin-bottom: 8px; display: block;"></i>
+            <span style="font-weight: 700; font-size: 0.875rem; color: var(--text-main);">UPI / QR</span>
+          </label>
+          <label style="border: 2px solid var(--border); background: var(--surface-alt); padding: 16px; border-radius: var(--radius-md); cursor: pointer; text-align: center; display: block;" id="codOption">
+            <input type="radio" name="payment_method" value="Cash on Delivery" onchange="switchPayment('cod')" style="display: none;">
+            <i class="fa-solid fa-hand-holding-dollar" style="font-size: 1.5rem; color: var(--text-muted); margin-bottom: 8px; display: block;"></i>
+            <span style="font-weight: 700; font-size: 0.875rem; color: var(--text-main);">Cash on Delivery</span>
+          </label>
+        </div>
+
+        <!-- Section 1: Card UI -->
+        <div id="cardSection">
+          <div class="form-group-modern">
+            <label class="form-label-modern">Card Number</label>
+            <div style="position: relative;">
+              <input type="text" class="form-control-modern" placeholder="4242 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4242" value="4532 8923 1102 7834" required>
+              <i class="fa-brands fa-cc-visa" style="position: absolute; right: 16px; top: 14px; font-size: 1.5rem; color: var(--primary);"></i>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group-modern">
+              <label class="form-label-modern">Expiry Date</label>
+              <input type="text" class="form-control-modern" placeholder="MM / YY" value="12/28" required>
+            </div>
+            <div class="form-group-modern">
+              <label class="form-label-modern">CVV / CVC</label>
+              <input type="password" class="form-control-modern" placeholder="3 Digits" value="892" maxlength="4" required>
+            </div>
+          </div>
+
+          <div class="form-group-modern">
+            <label class="form-label-modern">Cardholder Name</label>
+            <input type="text" class="form-control-modern" placeholder="Name as printed on card" value="{{ request.user.get_full_name|default:request.user.username }}" required>
+          </div>
+        </div>
+
+        <!-- Section 2: UPI UI -->
+        <div id="upiSection" style="display: none; text-align: center; padding: 20px 0;">
+          <div style="width: 140px; height: 140px; border: 2px dashed var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; background: var(--surface-alt);">
+            <i class="fa-solid fa-qrcode" style="font-size: 5rem; color: var(--text-main);"></i>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+            Scan with any UPI app (Google Pay, PhonePe, Paytm, BHIM)
+          </p>
+          <div class="form-group-modern" style="max-width: 360px; margin: 0 auto; text-align: left;">
+            <label class="form-label-modern">Or enter your UPI ID</label>
+            <input type="text" class="form-control-modern" placeholder="username@oksbi" value="customer@upi">
+          </div>
+        </div>
+
+        <!-- Section 3: COD UI -->
+        <div id="codSection" style="display: none; padding: 20px; background: var(--surface-alt); border-radius: var(--radius-md); margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <i class="fa-solid fa-truck" style="font-size: 2rem; color: var(--success);"></i>
+            <div>
+              <h4 style="font-weight: 700; margin-bottom: 2px;">Pay upon delivery</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Please keep exact cash or pay digitally via QR on arrival.</p>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-modern btn-primary-gradient" style="width: 100%; padding: 16px; font-size: 1.05rem; margin-top: 14px;">
+          <i class="fa-solid fa-lock"></i> Authorize & Pay ₹{{ total }}
+        </button>
+      </form>
+    </div>
+
+    <!-- Right: Order Summary Sidebar -->
+    <div>
+      <div class="summary-card">
+        <h3 class="summary-title">Payment Summary</h3>
+        <div class="summary-line">
+          <span>Items Total</span>
+          <span>₹{{ subtotal|default:total }}</span>
+        </div>
+        {% if discount %}
+          <div class="summary-line" style="color: var(--success);">
+            <span>Coupon Savings</span>
+            <span>-₹{{ discount }}</span>
+          </div>
+        {% endif %}
+        <div class="summary-line">
+          <span>Shipping Fee</span>
+          <span>{% if shipping == 0 %}<strong style="color: var(--success);">FREE</strong>{% else %}₹{{ shipping }}{% endif %}</span>
+        </div>
+        <div class="summary-line total">
+          <span>Grand Total</span>
+          <span>₹{{ total }}</span>
+        </div>
+
+        <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px; font-size: 0.825rem; color: var(--text-muted);">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <i class="fa-solid fa-shield-check" style="color: var(--success);"></i> 100% Risk-Free Guarantee
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-circle-check" style="color: var(--success);"></i> Instant SMS & Email Confirmation
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchPayment(type) {
+    const cardSec = document.getElementById('cardSection');
+    const upiSec = document.getElementById('upiSection');
+    const codSec = document.getElementById('codSection');
+
+    const cardOpt = document.getElementById('cardOption');
+    const upiOpt = document.getElementById('upiOption');
+    const codOpt = document.getElementById('codOption');
+
+    cardSec.style.display = type === 'card' ? 'block' : 'none';
+    upiSec.style.display = type === 'upi' ? 'block' : 'none';
+    codSec.style.display = type === 'cod' ? 'block' : 'none';
+
+    [cardOpt, upiOpt, codOpt].forEach(opt => {
+      opt.style.borderColor = 'var(--border)';
+      opt.style.background = 'var(--surface-alt)';
+    });
+
+    if (type === 'card') {
+      cardOpt.style.borderColor = 'var(--primary)';
+      cardOpt.style.background = 'var(--primary-light)';
+    } else if (type === 'upi') {
+      upiOpt.style.borderColor = 'var(--primary)';
+      upiOpt.style.background = 'var(--primary-light)';
+    } else if (type === 'cod') {
+      codOpt.style.borderColor = 'var(--primary)';
+      codOpt.style.background = 'var(--primary-light)';
+    }
+  }
+</script>
+{% endblock content %}

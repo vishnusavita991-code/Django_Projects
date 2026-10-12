@@ -1,0 +1,131 @@
+{% extends 'ecom/admin_base.html' %}
+{% load static %}
+
+{% block title %}Manage Orders & Bookings | NEXUS Admin{% endblock %}
+
+{% block content %}
+<div class="container-custom">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 style="font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">Customer Orders & Bookings</h1>
+      <p style="color: var(--text-muted); font-size: 0.925rem;">
+        Track fulfillments, update package dispatch statuses, and manage customer shipments.
+      </p>
+    </div>
+  </div>
+
+  <!-- Status Filter Pills -->
+  <div class="category-filter-chips" style="margin-bottom: 24px;">
+    <a href="/admin-view-booking" class="chip-btn {% if not selected_status %}active{% endif %}">
+      All Orders
+    </a>
+    <a href="/admin-view-booking?status=Pending" class="chip-btn {% if selected_status == 'Pending' %}active{% endif %}">
+      <i class="fa-solid fa-clock" style="color: #b45309;"></i> Pending
+    </a>
+    <a href="/admin-view-booking?status=Order%20Confirmed" class="chip-btn {% if selected_status == 'Order Confirmed' %}active{% endif %}">
+      <i class="fa-solid fa-check" style="color: #1d4ed8;"></i> Confirmed
+    </a>
+    <a href="/admin-view-booking?status=Out%20for%20Delivery" class="chip-btn {% if selected_status == 'Out for Delivery' %}active{% endif %}">
+      <i class="fa-solid fa-truck" style="color: #a21caf;"></i> Out for Delivery
+    </a>
+    <a href="/admin-view-booking?status=Delivered" class="chip-btn {% if selected_status == 'Delivered' %}active{% endif %}">
+      <i class="fa-solid fa-box-check" style="color: #047857;"></i> Delivered
+    </a>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="modern-table-container">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Customer Info</th>
+          <th>Product</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Quick Status Action</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+          <tr>
+            <td>
+              <strong>#NX-{{ o.id }}</strong>
+              <div style="font-size: 0.775rem; color: var(--text-muted);">{{ o.order_date }}</div>
+            </td>
+            <td>
+              <div style="font-weight: 700; color: var(--text-main);">{{ o.customer.get_name|default:o.customer.user.username }}</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-phone" style="font-size: 0.75rem;"></i> {{ o.mobile }}</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ o.address }}">
+                <i class="fa-solid fa-location-dot" style="font-size: 0.75rem;"></i> {{ o.address }}
+              </div>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                {% if o.product.product_image %}
+                  <img src="{% static o.product.product_image.url %}" alt="" style="width: 44px; height: 44px; border-radius: var(--radius-xs); object-fit: contain; background: var(--surface-alt); border: 1px solid var(--border);">
+                {% endif %}
+                <div>
+                  <div style="font-weight: 600; font-size: 0.9rem;">{{ o.product.name }}</div>
+                  <small style="color: var(--text-muted);">{{ o.product.category }}</small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong>₹{{ o.product.price }}</strong>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">{{ o.payment_method|default:"Card / Online" }}</div>
+            </td>
+            <td>
+              {% if o.status == 'Pending' %}
+                <span class="status-pill status-pending">Pending</span>
+              {% elif o.status == 'Order Confirmed' %}
+                <span class="status-pill status-confirmed">Confirmed</span>
+              {% elif o.status == 'Out for Delivery' %}
+                <span class="status-pill status-out-for-delivery">Out for Delivery</span>
+              {% elif o.status == 'Delivered' %}
+                <span class="status-pill status-delivered">Delivered</span>
+              {% endif %}
+            </td>
+            <td>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                {% if o.status != 'Order Confirmed' and o.status != 'Delivered' %}
+                  <a href="/quick-order-status/{{ o.id }}/Order%20Confirmed" class="btn-modern btn-sm-modern" style="background: var(--info-light); color: var(--info); font-size: 0.75rem; padding: 4px 8px;">
+                    Confirm
+                  </a>
+                {% endif %}
+                {% if o.status != 'Out for Delivery' and o.status != 'Delivered' %}
+                  <a href="/quick-order-status/{{ o.id }}/Out%20for%20Delivery" class="btn-modern btn-sm-modern" style="background: #fdf4ff; color: #a21caf; font-size: 0.75rem; padding: 4px 8px;">
+                    Dispatch
+                  </a>
+                {% endif %}
+                {% if o.status != 'Delivered' %}
+                  <a href="/quick-order-status/{{ o.id }}/Delivered" class="btn-modern btn-sm-modern" style="background: var(--success-light); color: var(--success); font-size: 0.75rem; padding: 4px 8px;">
+                    Deliver
+                  </a>
+                {% endif %}
+              </div>
+            </td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 8px;">
+                <a href="/update-order/{{ o.id }}" class="btn-modern btn-outline-modern btn-sm-modern" title="Edit Full Details">
+                  <i class="fa-solid fa-pen"></i>
+                </a>
+                <a href="/delete-order/{{ o.id }}" onclick="return confirm('Delete order #NX-{{ o.id }}?')" class="btn-modern btn-danger-modern btn-sm-modern" title="Delete Order">
+                  <i class="fa-solid fa-trash"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No orders matched the selected filter.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock content %}

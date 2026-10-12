@@ -1,0 +1,128 @@
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+
+{% block title %}My Orders & Tracking | NEXUS Store{% endblock %}
+
+{% block content %}
+<div class="container-custom" style="padding-top: 30px; padding-bottom: 60px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 style="font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">My Order History</h1>
+      <p style="color: var(--text-muted); font-size: 0.925rem;">
+        Track live package statuses and download official GST tax invoices.
+      </p>
+    </div>
+    <a href="/customer-home" class="btn-modern btn-outline-modern">
+      <i class="fa-solid fa-cart-shopping"></i> Continue Shopping
+    </a>
+  </div>
+
+  {% if data %}
+    <div style="display: flex; flex-direction: column; gap: 28px;">
+      {% for product_list, order in data %}
+        {% for p in product_list %}
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); transition: var(--transition);">
+            
+            <!-- Card Header: Order Details & Status Pill -->
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 18px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                <span style="font-size: 1.05rem; font-weight: 800; color: var(--text-main);">
+                  Order #NX-{{ order.id }}
+                </span>
+                <span style="color: var(--text-muted); font-size: 0.85rem;">
+                  <i class="fa-regular fa-calendar" style="margin-right: 4px;"></i> Placed on {{ order.order_date }}
+                </span>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">
+                  <i class="fa-regular fa-credit-card" style="margin-right: 4px;"></i> {{ order.payment_method|default:"Card / Online" }}
+                </span>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 12px;">
+                {% if order.status == 'Pending' %}
+                  <span class="status-pill status-pending"><i class="fa-solid fa-clock"></i> Pending Confirmation</span>
+                {% elif order.status == 'Order Confirmed' %}
+                  <span class="status-pill status-confirmed"><i class="fa-solid fa-check"></i> Order Confirmed</span>
+                {% elif order.status == 'Out for Delivery' %}
+                  <span class="status-pill status-out-for-delivery"><i class="fa-solid fa-truck"></i> Out for Delivery</span>
+                {% elif order.status == 'Delivered' %}
+                  <span class="status-pill status-delivered"><i class="fa-solid fa-box-check"></i> Delivered</span>
+                {% endif %}
+
+                <a href="/download-invoice/{{ order.id }}/{{ p.id }}" class="btn-modern btn-outline-modern btn-sm-modern" title="Download Official Invoice">
+                  <i class="fa-solid fa-file-pdf" style="color: var(--danger);"></i> Invoice
+                </a>
+              </div>
+            </div>
+
+            <!-- Visual Progress Timeline -->
+            <div class="order-tracking-timeline">
+              <div class="timeline-step {% if order.status == 'Pending' %}active{% elif order.status == 'Order Confirmed' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
+                <div class="timeline-dot"><i class="fa-solid fa-receipt"></i></div>
+                <div class="timeline-label">Order Placed</div>
+              </div>
+              <div class="timeline-step {% if order.status == 'Order Confirmed' %}active{% elif order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
+                <div class="timeline-dot"><i class="fa-solid fa-box"></i></div>
+                <div class="timeline-label">Confirmed</div>
+              </div>
+              <div class="timeline-step {% if order.status == 'Out for Delivery' %}active{% elif order.status == 'Delivered' %}completed{% endif %}">
+                <div class="timeline-dot"><i class="fa-solid fa-truck-fast"></i></div>
+                <div class="timeline-label">Out for Delivery</div>
+              </div>
+              <div class="timeline-step {% if order.status == 'Delivered' %}completed active{% endif %}">
+                <div class="timeline-dot"><i class="fa-solid fa-house-chimney"></i></div>
+                <div class="timeline-label">Delivered</div>
+              </div>
+            </div>
+
+            <!-- Product and Shipping Information -->
+            <div style="background: var(--surface-alt); border-radius: var(--radius-md); padding: 20px; display: grid; grid-template-columns: 80px 1fr 1fr; gap: 24px; align-items: center;">
+              <!-- Product Image -->
+              <div style="width: 80px; height: 80px; border-radius: var(--radius-sm); overflow: hidden; background: white; border: 1px solid var(--border);">
+                <img src="{% static p.product_image.url %}" alt="{{ p.name }}" style="width: 100%; height: 100%; object-fit: contain;">
+              </div>
+
+              <!-- Product Details -->
+              <div>
+                <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 4px;">
+                  <a href="/product/{{ p.id }}">{{ p.name }}</a>
+                </h4>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">
+                  Category: {{ p.category }} &bull; Qty: {{ order.quantity|default:1 }}
+                </div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">
+                  ₹{{ p.price }}
+                </div>
+              </div>
+
+              <!-- Shipping Destination -->
+              <div style="border-left: 1px solid var(--border); padding-left: 20px; font-size: 0.85rem;">
+                <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
+                  <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> Shipping Address:
+                </div>
+                <div style="color: var(--text-muted); line-height: 1.5;">
+                  {{ order.address }}
+                </div>
+                <div style="color: var(--text-muted); margin-top: 4px;">
+                  <i class="fa-solid fa-phone" style="font-size: 0.75rem;"></i> {{ order.mobile }}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 80px 20px; text-align: center; max-width: 580px; margin: 40px auto;">
+      <i class="fa-solid fa-box-open" style="font-size: 3.5rem; color: var(--text-subtle); margin-bottom: 18px;"></i>
+      <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 8px;">No Orders Placed Yet</h2>
+      <p style="color: var(--text-muted); margin-bottom: 28px; line-height: 1.6;">
+        You haven't placed any orders yet. Browse our premier selection of audio, wearable tech, and fashion.
+      </p>
+      <a href="/customer-home" class="btn-modern btn-primary-gradient" style="padding: 12px 28px;">
+        Start Shopping Now
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock content %}

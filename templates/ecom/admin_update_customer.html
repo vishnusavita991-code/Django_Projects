@@ -1,0 +1,68 @@
+{% extends 'ecom/admin_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Update Customer Details | NEXUS Admin{% endblock %}
+
+{% block content %}
+<div class="container-custom">
+  <div style="max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-sm);">
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+      <div>
+        <h1 style="font-size: 1.65rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">Update Customer Account</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Modify personal credentials and address details.</p>
+      </div>
+      <a href="/view-customer" class="btn-modern btn-outline-modern btn-sm-modern">
+        <i class="fa-solid fa-arrow-left"></i> Cancel
+      </a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group-modern">
+          <label class="form-label-modern">First Name</label>
+          {% render_field userForm.first_name class="form-control-modern" placeholder="First Name" required=True %}
+        </div>
+        <div class="form-group-modern">
+          <label class="form-label-modern">Last Name</label>
+          {% render_field userForm.last_name class="form-control-modern" placeholder="Last Name" required=True %}
+        </div>
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Username</label>
+        {% render_field userForm.username class="form-control-modern" placeholder="Username" required=True %}
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Password (reset or confirm)</label>
+        {% render_field userForm.password class="form-control-modern" type="password" placeholder="Password" required=True %}
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Mobile Number</label>
+        {% render_field customerForm.mobile class="form-control-modern" placeholder="Phone" required=True %}
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Delivery Address</label>
+        {% render_field customerForm.address class="form-control-modern" placeholder="Address" required=True %}
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Profile Picture (Optional)</label>
+        {% render_field customerForm.profile_pic class="form-control-modern" style="padding: 8px 12px;" %}
+      </div>
+
+      <div style="margin-top: 30px;">
+        <button type="submit" class="btn-modern btn-primary-gradient" style="width: 100%; padding: 14px; font-size: 1rem;">
+          <i class="fa-solid fa-floppy-disk"></i> Update Customer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}

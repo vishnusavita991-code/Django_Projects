@@ -1,0 +1,146 @@
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart | NEXUS Store{% endblock %}
+
+{% block content %}
+<div class="container-custom" style="padding-top: 20px; padding-bottom: 60px;">
+  <!-- Stepper -->
+  <div class="stepper-header">
+    <div class="step-item active">
+      <div class="step-number">1</div>
+      <span>Shopping Cart</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step-item">
+      <div class="step-number">2</div>
+      <span>Shipping Address</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step-item">
+      <div class="step-number">3</div>
+      <span>Payment</span>
+    </div>
+  </div>
+
+  {% if products %}
+    <div class="cart-layout">
+      <!-- Left: Item List -->
+      <div class="cart-card">
+        <div class="cart-header-title">
+          <span>Your Bag ({{ products|length }} item{{ products|length|pluralize }})</span>
+          <a href="/" style="font-size: 0.875rem; color: var(--primary); font-weight: 600;">
+            <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+          </a>
+        </div>
+
+        <div>
+          {% for p in products %}
+            <div class="cart-item-row">
+              <img src="{% static p.product_image.url %}" alt="{{ p.name }}" class="cart-item-img">
+              <div>
+                <div class="cart-item-title"><a href="/product/{{ p.id }}">{{ p.name }}</a></div>
+                <div class="cart-item-category">{{ p.category }} &bull; In Stock</div>
+              </div>
+              <div class="cart-item-price">
+                ₹{{ p.price }}
+              </div>
+              <div>
+                <a href="/remove-from-cart/{{ p.id }}" class="cart-remove-link" title="Remove from bag">
+                  <i class="fa-regular fa-trash-can"></i> Remove
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Right: Summary Sidebar -->
+      <div>
+        <div class="summary-card">
+          <h3 class="summary-title">Order Summary</h3>
+
+          <!-- Free Shipping Threshold -->
+          {% if subtotal < 999 %}
+            <div class="free-shipping-progress">
+              <i class="fa-solid fa-truck-fast"></i> Add ₹{{ 999|add:"-subtotal" }} more to unlock <strong>FREE Express Shipping</strong>!
+            </div>
+          {% else %}
+            <div class="free-shipping-progress" style="background: #ecfdf5; color: #047857;">
+              <i class="fa-solid fa-circle-check"></i> Congratulations! You qualified for <strong>FREE Delivery</strong>!
+            </div>
+          {% endif %}
+
+          <div class="summary-line">
+            <span>Subtotal</span>
+            <span>₹{{ subtotal }}</span>
+          </div>
+
+          {% if discount > 0 %}
+            <div class="summary-line" style="color: var(--success); font-weight: 600;">
+              <span>Coupon Discount ({{ coupon_code }})</span>
+              <span>-₹{{ discount }}</span>
+            </div>
+          {% endif %}
+
+          <div class="summary-line">
+            <span>Shipping</span>
+            <span>{% if shipping == 0 %}<strong style="color: var(--success);">FREE</strong>{% else %}₹{{ shipping }}{% endif %}</span>
+          </div>
+
+          <div class="summary-line">
+            <span>Estimated Taxes</span>
+            <span>Included in price</span>
+          </div>
+
+          <!-- Coupon Input -->
+          {% if coupon_code %}
+            <div style="background: var(--surface-alt); padding: 10px 14px; border-radius: var(--radius-sm); margin: 14px 0; display: flex; align-items: center; justify-content: space-between; font-size: 0.875rem;">
+              <span><i class="fa-solid fa-tag" style="color: var(--primary);"></i> <strong>{{ coupon_code }}</strong> applied</span>
+              <a href="/remove-coupon" style="color: var(--danger); font-weight: 600;">Remove</a>
+            </div>
+          {% else %}
+            <form action="/apply-coupon" method="post" class="coupon-box">
+              {% csrf_token %}
+              <input type="text" name="coupon" placeholder="Promo code (e.g. SAVE10)" class="coupon-input" required>
+              <button type="submit" class="btn-modern btn-outline-modern btn-sm-modern">Apply</button>
+            </form>
+          {% endif %}
+
+          <div class="summary-line total">
+            <span>Total Payable</span>
+            <span>₹{{ grand_total }}</span>
+          </div>
+
+          {% if savings > 0 %}
+            <div style="background: #f0fdf4; border: 1px dashed #22c55e; color: #15803d; border-radius: var(--radius-sm); padding: 10px; text-align: center; font-size: 0.85rem; font-weight: 700; margin: 16px 0;">
+              🎉 You are saving a total of ₹{{ savings }}!
+            </div>
+          {% endif %}
+
+          <a href="/customer-address" class="btn-modern btn-primary-gradient" style="width: 100%; padding: 14px; margin-top: 14px; font-size: 1rem;">
+            Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <div style="margin-top: 20px; font-size: 0.775rem; color: var(--text-subtle); text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fa-solid fa-lock"></i> Bank-grade 256-Bit SSL Secured Checkout
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 80px 20px; text-align: center; max-width: 600px; margin: 40px auto; box-shadow: var(--shadow-sm);">
+      <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 24px auto;">
+        <i class="fa-solid fa-bag-shopping"></i>
+      </div>
+      <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 8px;">Your Shopping Bag is Empty</h2>
+      <p style="color: var(--text-muted); margin-bottom: 28px; line-height: 1.6;">
+        Explore our curated catalog for high-performance audio, wearable technology, and premium apparel.
+      </p>
+      <a href="/" class="btn-modern btn-primary-gradient" style="padding: 12px 28px;">
+        <i class="fa-solid fa-compass"></i> Discover Products
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock content %}

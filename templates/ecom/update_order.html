@@ -1,0 +1,36 @@
+{% extends 'ecom/admin_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Update Order Status | NEXUS Admin{% endblock %}
+
+{% block content %}
+<div class="container-custom">
+  <div style="max-width: 520px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-sm);">
+    
+    <div style="margin-bottom: 24px;">
+      <h1 style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">Update Order Status</h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        Change the fulfillment and shipping progress for Order #NX-{{ order.id }}.
+      </p>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group-modern">
+        <label class="form-label-modern">Select New Order Status</label>
+        {% render_field orderForm.status class="form-control-modern" style="font-weight: 600; padding: 12px 16px;" %}
+      </div>
+
+      <div style="margin-top: 28px; display: flex; gap: 14px;">
+        <a href="/admin-view-booking" class="btn-modern btn-outline-modern" style="flex: 1;">
+          <i class="fa-solid fa-arrow-left"></i> Cancel
+        </a>
+        <button type="submit" class="btn-modern btn-primary-gradient" style="flex: 2; padding: 14px;">
+          <i class="fa-solid fa-check"></i> Apply Status
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}

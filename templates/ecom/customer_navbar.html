@@ -1,0 +1,76 @@
+{% load static %}
+<header class="site-header">
+  <div class="container-custom">
+    <div class="navbar-container">
+      <!-- Brand Logo -->
+      <a href="/customer-home" class="brand-logo">
+        <div class="brand-icon">
+          <i class="fa-solid fa-bag-shopping"></i>
+        </div>
+        <span>NEXUS <span class="brand-gradient-text">STORE</span></span>
+      </a>
+
+      <!-- Search Bar -->
+      <div class="search-form-wrapper">
+        <form action="/search" method="get">
+          <div class="search-input-group">
+            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-subtle); margin-right: 10px;"></i>
+            <input type="search" name="query" value="{{ query|default:'' }}" placeholder="Search products, brands, gadgets, fashion..." autocomplete="off">
+            <button type="submit" class="search-btn" title="Search">
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Navigation Actions -->
+      <div class="nav-actions">
+        <!-- Orders Link -->
+        <a href="/my-order" class="nav-link-btn">
+          <i class="fa-solid fa-box-open"></i> My Orders
+        </a>
+
+        <!-- Cart Button -->
+        <a href="/cart" class="cart-indicator" title="Shopping Cart">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>Cart</span>
+          <span class="cart-badge">{{ product_count_in_cart|default:0 }}</span>
+        </a>
+
+        <!-- Customer Profile Dropdown -->
+        <div class="user-menu-dropdown">
+          <button class="user-trigger-btn">
+            <div class="avatar-chip">
+              {{ request.user.first_name|default:request.user.username|make_list|first|upper }}
+            </div>
+            <span>{{ request.user.first_name|default:request.user.username }}</span>
+            <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
+          </button>
+          
+          <div class="dropdown-menu-custom">
+            <div class="dropdown-header-custom">
+              <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+              <small>{{ request.user.email|default:"Active Customer" }}</small>
+            </div>
+            <a href="/my-profile" class="dropdown-item-custom">
+              <i class="fa-regular fa-id-card"></i> My Profile
+            </a>
+            <a href="/my-order" class="dropdown-item-custom">
+              <i class="fa-solid fa-clock-rotate-left"></i> Order History
+            </a>
+            <a href="/send-feedback" class="dropdown-item-custom">
+              <i class="fa-regular fa-comment-dots"></i> Send Feedback
+            </a>
+            <a href="/contactus" class="dropdown-item-custom">
+              <i class="fa-regular fa-envelope"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="/logout" class="dropdown-item-custom" style="color: var(--danger);">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

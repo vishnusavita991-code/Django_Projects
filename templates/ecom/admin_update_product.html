@@ -1,0 +1,74 @@
+{% extends 'ecom/admin_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Update Product | NEXUS Admin{% endblock %}
+
+{% block content %}
+<div class="container-custom">
+  <div style="max-width: 720px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-sm);">
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+      <div>
+        <h1 style="font-size: 1.65rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">Edit Product Listing</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Modify details, pricing, stock, and photography.</p>
+      </div>
+      <a href="/admin-products" class="btn-modern btn-outline-modern btn-sm-modern">
+        <i class="fa-solid fa-arrow-left"></i> Cancel
+      </a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Product Title / Name</label>
+        {% render_field productForm.name class="form-control-modern" placeholder="Product Name" required=True %}
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group-modern">
+          <label class="form-label-modern">Category</label>
+          {% render_field productForm.category class="form-control-modern" required=True %}
+        </div>
+        <div class="form-group-modern">
+          <label class="form-label-modern">Stock Quantity</label>
+          {% render_field productForm.stock class="form-control-modern" required=True %}
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group-modern">
+          <label class="form-label-modern">Discounted Selling Price (₹)</label>
+          {% render_field productForm.price class="form-control-modern" required=True %}
+        </div>
+        <div class="form-group-modern">
+          <label class="form-label-modern">Original List Price (₹, optional)</label>
+          {% render_field productForm.original_price class="form-control-modern" %}
+        </div>
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Rating</label>
+        {% render_field productForm.rating class="form-control-modern" %}
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Product Description & Specs</label>
+        {% render_field productForm.description class="form-control-modern" style="min-height: 100px; resize: vertical;" required=True %}
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Replace Product Image (optional)</label>
+        {% render_field productForm.product_image class="form-control-modern" style="padding: 8px 12px;" %}
+      </div>
+
+      <div style="margin-top: 30px; display: flex; gap: 14px;">
+        <button type="submit" class="btn-modern btn-primary-gradient" style="flex: 1; padding: 14px; font-size: 1rem;">
+          <i class="fa-solid fa-floppy-disk"></i> Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}

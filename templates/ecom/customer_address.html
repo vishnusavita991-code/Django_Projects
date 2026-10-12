@@ -1,0 +1,78 @@
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Shipping Address | NEXUS Store{% endblock %}
+
+{% block content %}
+<div class="container-custom" style="padding-top: 20px; padding-bottom: 60px;">
+  <!-- Stepper -->
+  <div class="stepper-header">
+    <div class="step-item completed">
+      <div class="step-number"><i class="fa-solid fa-check"></i></div>
+      <span>Shopping Cart</span>
+    </div>
+    <div class="step-divider" style="background: var(--primary);"></div>
+    <div class="step-item active">
+      <div class="step-number">2</div>
+      <span>Shipping Address</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step-item">
+      <div class="step-number">3</div>
+      <span>Payment</span>
+    </div>
+  </div>
+
+  {% if product_in_cart %}
+    <div style="max-width: 600px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-sm);">
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;">Where should we deliver?</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Please provide accurate contact and shipping details to ensure smooth express delivery.
+        </p>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group-modern">
+          <label class="form-label-modern">
+            <i class="fa-regular fa-envelope" style="color: var(--primary); margin-right: 6px;"></i> Email Address
+          </label>
+          {% render_field addressForm.Email class="form-control-modern" placeholder="e.g. alex@example.com" required=True %}
+        </div>
+
+        <div class="form-group-modern">
+          <label class="form-label-modern">
+            <i class="fa-solid fa-phone" style="color: var(--primary); margin-right: 6px;"></i> Mobile Phone Number
+          </label>
+          {% render_field addressForm.Mobile class="form-control-modern" placeholder="10-digit mobile number" required=True %}
+        </div>
+
+        <div class="form-group-modern">
+          <label class="form-label-modern">
+            <i class="fa-solid fa-location-dot" style="color: var(--primary); margin-right: 6px;"></i> Complete Shipping Address
+          </label>
+          {% render_field addressForm.Address class="form-control-modern" style="min-height: 100px; resize: vertical;" placeholder="House / Flat No., Street, Landmark, City, State, PIN Code" required=True %}
+        </div>
+
+        <div style="margin-top: 30px; display: flex; gap: 14px;">
+          <a href="/cart" class="btn-modern btn-outline-modern" style="flex: 1;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Cart
+          </a>
+          <button type="submit" class="btn-modern btn-primary-gradient" style="flex: 2; padding: 14px;">
+            Continue to Payment <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  {% else %}
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 70px 20px; text-align: center; max-width: 520px; margin: 40px auto;">
+      <i class="fa-solid fa-cart-shopping" style="font-size: 3rem; color: var(--text-subtle); margin-bottom: 16px;"></i>
+      <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 8px;">Your Cart is Empty</h3>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Please add products to your cart before proceeding with shipping address.</p>
+      <a href="/" class="btn-modern btn-primary-gradient">Explore Products</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock content %}

@@ -1,0 +1,94 @@
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+
+{% block title %}My Profile | NEXUS Store{% endblock %}
+
+{% block content %}
+<div class="container-custom" style="padding-top: 36px; padding-bottom: 60px;">
+  <div style="max-width: 720px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden;">
+    
+    <!-- Profile Banner Cover -->
+    <div style="height: 140px; background: var(--hero-gradient); position: relative;">
+      <div style="position: absolute; bottom: -45px; left: 36px; display: flex; align-items: flex-end; gap: 20px;">
+        <div style="width: 90px; height: 90px; border-radius: 50%; background: var(--surface); border: 4px solid var(--surface); box-shadow: var(--shadow-md); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          {% if customer.profile_pic %}
+            <img src="{% static customer.profile_pic.url %}" alt="Profile Pic" style="width: 100%; height: 100%; object-fit: cover;">
+          {% else %}
+            <div style="width: 100%; height: 100%; background: var(--accent-gradient); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800;">
+              {{ request.user.first_name|default:request.user.username|make_list|first|upper }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Info Body -->
+    <div style="padding: 60px 36px 36px 36px;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px;">
+        <div>
+          <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">
+            {{ request.user.get_full_name|default:request.user.username }}
+          </h1>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">
+            @{{ request.user.username }} &bull; Member Account
+          </p>
+        </div>
+        <a href="/edit-profile" class="btn-modern btn-outline-modern">
+          <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+        </a>
+      </div>
+
+      <!-- Detail Info Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: var(--surface-alt); border-radius: var(--radius-md); padding: 24px; margin-bottom: 30px;">
+        <div>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Email Address</span>
+          <div style="font-weight: 600; font-size: 0.95rem; margin-top: 4px; color: var(--text-main);">
+            <i class="fa-regular fa-envelope" style="color: var(--primary); margin-right: 6px;"></i>
+            {{ request.user.email|default:"Not provided" }}
+          </div>
+        </div>
+
+        <div>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Phone Number</span>
+          <div style="font-weight: 600; font-size: 0.95rem; margin-top: 4px; color: var(--text-main);">
+            <i class="fa-solid fa-phone" style="color: var(--primary); margin-right: 6px;"></i>
+            {{ customer.mobile|default:"Not provided" }}
+          </div>
+        </div>
+
+        <div style="grid-column: span 2;">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Default Shipping Address</span>
+          <div style="font-weight: 600; font-size: 0.95rem; margin-top: 4px; color: var(--text-main); line-height: 1.5;">
+            <i class="fa-solid fa-location-dot" style="color: var(--primary); margin-right: 6px;"></i>
+            {{ customer.address|default:"No shipping address saved yet" }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Cards -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <a href="/my-order" style="padding: 18px; border: 1.5px solid var(--border); border-radius: var(--radius-md); display: flex; align-items: center; gap: 14px; transition: var(--transition);" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width: 44px; height: 44px; border-radius: var(--radius-sm); background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.95rem;">My Orders</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Track package statuses</div>
+          </div>
+        </a>
+
+        <a href="/send-feedback" style="padding: 18px; border: 1.5px solid var(--border); border-radius: var(--radius-md); display: flex; align-items: center; gap: 14px; transition: var(--transition);" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width: 44px; height: 44px; border-radius: var(--radius-sm); background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+            <i class="fa-regular fa-comment-dots"></i>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.95rem;">Send Feedback</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Share your experience</div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}

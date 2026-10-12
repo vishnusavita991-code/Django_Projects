@@ -1,0 +1,5 @@
+Django>=4.2
+django-widget-tweaks>=1.4.8
+pillow>=9.0.0
+xhtml2pdf>=0.2.11
+sqlparse>=0.4.0

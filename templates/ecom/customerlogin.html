@@ -1,0 +1,60 @@
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Customer Sign In | NEXUS Store{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 16px auto;">
+        <i class="fa-regular fa-user"></i>
+      </div>
+      <h1 class="auth-title">Customer Sign In</h1>
+      <p class="auth-subtitle">Access your orders, saved addresses, and member perks.</p>
+    </div>
+
+    <!-- Quick Demo Auto-fill Pill -->
+    <div style="background: var(--surface-alt); border: 1px dashed var(--border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 24px; text-align: center; font-size: 0.85rem;">
+      <span style="color: var(--text-muted);">Quick Demo Login:</span>
+      <button type="button" onclick="fillDemoCustomer()" style="background: var(--primary); color: white; border: none; padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.775rem; font-weight: 700; cursor: pointer; margin-left: 8px;">
+        Auto-Fill (customer / customer123)
+      </button>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group-modern">
+        <label class="form-label-modern">Username</label>
+        {% render_field form.username id="customerUsername" class="form-control-modern" placeholder="Enter your username" required=True %}
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Password</label>
+        {% render_field form.password id="customerPassword" class="form-control-modern" placeholder="Enter your password" required=True %}
+      </div>
+
+      <button type="submit" class="btn-modern btn-primary-gradient" style="width: 100%; padding: 14px; margin-top: 10px; font-size: 1rem;">
+        Sign In to My Account
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 24px; font-size: 0.9rem; color: var(--text-muted);">
+      Don't have an account yet? 
+      <a href="/customersignup" style="color: var(--primary); font-weight: 700;">Create Account</a>
+    </div>
+
+    <div style="text-align: center; margin-top: 12px; font-size: 0.85rem;">
+      <a href="/adminlogin" style="color: var(--text-subtle);">Are you an administrator? Sign in here</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function fillDemoCustomer() {
+    document.getElementById('customerUsername').value = 'customer';
+    document.getElementById('customerPassword').value = 'customer123';
+  }
+</script>
+{% endblock content %}

@@ -1,0 +1,134 @@
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} | NEXUS Store{% endblock %}
+
+{% block content %}
+<div class="container-custom" style="padding-top: 30px; padding-bottom: 60px;">
+  <!-- Breadcrumbs -->
+  <nav style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+    <a href="/" style="color: var(--primary);">Home</a>
+    <span>/</span>
+    <a href="/?category={{ product.category|urlencode }}" style="color: var(--primary);">{{ product.category }}</a>
+    <span>/</span>
+    <span style="color: var(--text-main); font-weight: 600;">{{ product.name }}</span>
+  </nav>
+
+  <!-- Product Detail Showcase -->
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-sm); display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 50px;">
+    <!-- Left: Image Gallery -->
+    <div>
+      <div style="position: relative; border-radius: var(--radius-md); overflow: hidden; background: var(--surface-alt); height: 460px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
+        <img src="{% static product.product_image.url %}" alt="{{ product.name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+        {% if product.discount_percent > 0 %}
+          <div style="position: absolute; top: 16px; left: 16px;">
+            <span class="badge-discount" style="font-size: 0.85rem; padding: 6px 14px;">-{{ product.discount_percent }}% OFF</span>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Trust highlights below image -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px;">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface-alt); border-radius: var(--radius-sm);">
+          <i class="fa-solid fa-truck-fast" style="color: var(--primary); font-size: 1.25rem;"></i>
+          <div style="font-size: 0.825rem; font-weight: 600;">Fast Free Delivery Available</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface-alt); border-radius: var(--radius-sm);">
+          <i class="fa-solid fa-shield-halved" style="color: var(--success); font-size: 1.25rem;"></i>
+          <div style="font-size: 0.825rem; font-weight: 600;">1-Year Official Warranty</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Product Information & Purchase -->
+    <div style="display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+        <span class="badge-category">{{ product.category }}</span>
+        <span style="background: var(--success-light); color: var(--success); font-weight: 700; font-size: 0.775rem; padding: 4px 12px; border-radius: var(--radius-full);">
+          <i class="fa-solid fa-check"></i> In Stock ({{ product.stock }} units)
+        </span>
+      </div>
+
+      <h1 style="font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 14px; line-height: 1.25;">
+        {{ product.name }}
+      </h1>
+
+      <!-- Rating -->
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 0.95rem;">
+        <div style="color: #f59e0b; display: flex; align-items: center; gap: 4px;">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star-half-stroke"></i>
+        </div>
+        <span style="font-weight: 700; color: var(--text-main);">{{ product.rating }}</span>
+        <span style="color: var(--text-muted);">| {{ product.reviews_count }} verified buyer ratings</span>
+      </div>
+
+      <!-- Pricing -->
+      <div style="background: var(--surface-alt); padding: 18px 24px; border-radius: var(--radius-md); margin-bottom: 24px; display: flex; align-items: baseline; gap: 16px;">
+        <span style="font-size: 2.25rem; font-weight: 800; color: var(--text-main);">₹{{ product.price }}</span>
+        {% if product.original_price %}
+          <span style="font-size: 1.25rem; color: var(--text-subtle); text-decoration: line-through;">₹{{ product.original_price }}</span>
+          <span style="color: var(--success); font-weight: 700; font-size: 0.95rem;">Save ₹{{ product.original_price|add:"-product.price" }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Description -->
+      <div style="margin-bottom: 28px;">
+        <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 8px;">Product Overview</h3>
+        <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.7;">{{ product.description }}</p>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; gap: 16px; margin-top: auto;">
+        <a href="/add-to-cart/{{ product.id }}" class="btn-modern btn-primary-gradient" style="flex: 1; padding: 14px 24px; font-size: 1rem;">
+          <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+        </a>
+        <a href="/cart" class="btn-modern btn-outline-modern" style="padding: 14px 24px;">
+          Go to Cart <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products Section -->
+  {% if related_products %}
+    <section>
+      <div class="catalog-header">
+        <div>
+          <h2 class="catalog-title">Similar Items in {{ product.category }}</h2>
+          <p class="catalog-subtitle">You might also like these recommended products</p>
+        </div>
+      </div>
+      <div class="product-grid">
+        {% for p in related_products %}
+          <article class="product-card">
+            <div class="card-badge-top-left">
+              <span class="badge-category">{{ p.category }}</span>
+            </div>
+            <div class="product-image-container">
+              <a href="/product/{{ p.id }}">
+                <img src="{% static p.product_image.url %}" alt="{{ p.name }}">
+              </a>
+            </div>
+            <div class="product-body">
+              <h3 class="product-title"><a href="/product/{{ p.id }}">{{ p.name }}</a></h3>
+              <div class="product-price-row">
+                <span class="price-current">₹{{ p.price }}</span>
+                {% if p.original_price %}<span class="price-original">₹{{ p.original_price }}</span>{% endif %}
+              </div>
+              <div class="product-actions">
+                <a href="/add-to-cart/{{ p.id }}" class="btn-add-cart">
+                  <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                </a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</div>
+{% endblock content %}

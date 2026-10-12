@@ -1,0 +1,97 @@
+{% extends 'ecom/admin_base.html' %}
+{% load static %}
+
+{% block title %}Manage Products | NEXUS Store{% endblock %}
+
+{% block content %}
+<div class="container-custom">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 style="font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">Store Products Inventory</h1>
+      <p style="color: var(--text-muted); font-size: 0.925rem;">
+        View, search, edit, and organize catalog listings.
+      </p>
+    </div>
+    <a href="/admin-add-product" class="btn-modern btn-primary-gradient">
+      <i class="fa-solid fa-plus"></i> Add New Product
+    </a>
+  </div>
+
+  <div class="modern-table-container">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Rating</th>
+          <th>Description</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); overflow: hidden; background: var(--surface-alt); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  {% if p.product_image %}
+                    <img src="{% static p.product_image.url %}" alt="{{ p.name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                  {% endif %}
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">
+                    <a href="/product/{{ p.id }}" target="_blank" style="color: inherit;">{{ p.name }}</a>
+                  </div>
+                  <small style="color: var(--text-muted);">ID: #PROD-{{ p.id }}</small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge-category" style="background: var(--surface-alt); color: var(--text-main); border: 1px solid var(--border);">
+                {{ p.category }}
+              </span>
+            </td>
+            <td>
+              <strong>₹{{ p.price }}</strong>
+              {% if p.original_price %}
+                <small style="color: var(--text-subtle); text-decoration: line-through; margin-left: 4px;">₹{{ p.original_price }}</small>
+              {% endif %}
+            </td>
+            <td>
+              {% if p.stock > 10 %}
+                <span style="color: var(--success); font-weight: 600;"><i class="fa-solid fa-circle-check"></i> {{ p.stock }} units</span>
+              {% else %}
+                <span style="color: var(--danger); font-weight: 600;"><i class="fa-solid fa-triangle-exclamation"></i> Low ({{ p.stock }})</span>
+              {% endif %}
+            </td>
+            <td>
+              <span style="color: #f59e0b; font-weight: 600;"><i class="fa-solid fa-star"></i> {{ p.rating }}</span>
+            </td>
+            <td style="max-width: 260px; color: var(--text-muted); font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              {{ p.description }}
+            </td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 8px;">
+                <a href="{% url 'update-product' p.id %}" class="btn-modern btn-outline-modern btn-sm-modern" title="Edit Product">
+                  <i class="fa-solid fa-pen"></i> Edit
+                </a>
+                <a href="{% url 'delete-product' p.id %}" onclick="return confirm('Are you sure you want to delete {{ p.name|escapejs }}?')" class="btn-modern btn-danger-modern btn-sm-modern" title="Delete Product">
+                  <i class="fa-solid fa-trash"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No products found in store inventory. <a href="/admin-add-product" style="color: var(--primary);">Add your first product</a>.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock content %}

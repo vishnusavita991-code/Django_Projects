@@ -1,0 +1,53 @@
+{% load static %}
+<header class="site-header">
+  <div class="container-custom">
+    <div class="navbar-container">
+      <!-- Brand Logo -->
+      <a href="/" class="brand-logo">
+        <div class="brand-icon">
+          <i class="fa-solid fa-bag-shopping"></i>
+        </div>
+        <span>NEXUS <span class="brand-gradient-text">STORE</span></span>
+      </a>
+
+      <!-- Smart Search Bar -->
+      <div class="search-form-wrapper">
+        <form action="/search" method="get">
+          <div class="search-input-group">
+            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-subtle); margin-right: 10px;"></i>
+            <input type="search" name="query" value="{{ query|default:'' }}" placeholder="Search products, brands, gadgets, fashion..." autocomplete="off">
+            <button type="submit" class="search-btn" title="Search">
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Navigation Actions -->
+      <div class="nav-actions">
+        <a href="/aboutus" class="nav-link-btn">About</a>
+        <a href="/contactus" class="nav-link-btn">Contact</a>
+
+        <!-- Cart Button -->
+        <a href="/cart" class="cart-indicator" title="Shopping Cart">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>Cart</span>
+          <span class="cart-badge">{{ product_count_in_cart|default:0 }}</span>
+        </a>
+
+        <!-- Customer Login / Signup -->
+        <a href="/customerlogin" class="btn-modern btn-outline-modern btn-sm-modern">
+          <i class="fa-regular fa-user"></i> Sign In
+        </a>
+        <a href="/customersignup" class="btn-modern btn-primary-gradient btn-sm-modern">
+          Sign Up
+        </a>
+
+        <!-- Admin Portal Icon Link -->
+        <a href="/adminclick" class="btn-modern btn-sm-modern" style="background: var(--surface-alt); color: var(--text-muted); border: 1px solid var(--border);" title="Admin Portal">
+          <i class="fa-solid fa-shield-halved"></i> Admin
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}NEXUS Admin Console{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body style="background: #f1f5f9;">
+  <!-- Admin Navigation Bar -->
+  <header style="background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 1000; box-shadow: var(--shadow-sm);">
+    <div class="container-custom">
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 70px;">
+        <!-- Logo -->
+        <a href="/admin-dashboard" class="brand-logo" style="color: white;">
+          <div class="brand-icon" style="background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <span>NEXUS <span style="color: #ec4899; font-weight: 800;">ADMIN</span></span>
+        </a>
+
+        <!-- Admin Nav Links -->
+        <nav style="display: flex; align-items: center; gap: 8px;">
+          <a href="/admin-dashboard" class="nav-link-btn" style="color: #cbd5e1;">
+            <i class="fa-solid fa-gauge-high"></i> Dashboard
+          </a>
+          <a href="/admin-products" class="nav-link-btn" style="color: #cbd5e1;">
+            <i class="fa-solid fa-box-archive"></i> Products
+          </a>
+          <a href="/admin-add-product" class="nav-link-btn" style="color: #cbd5e1;">
+            <i class="fa-solid fa-plus"></i> Add Product
+          </a>
+          <a href="/admin-view-booking" class="nav-link-btn" style="color: #cbd5e1;">
+            <i class="fa-solid fa-clipboard-list"></i> Orders
+          </a>
+          <a href="/view-customer" class="nav-link-btn" style="color: #cbd5e1;">
+            <i class="fa-solid fa-users"></i> Customers
+          </a>
+          <a href="/view-feedback" class="nav-link-btn" style="color: #cbd5e1;">
+            <i class="fa-regular fa-comments"></i> Feedbacks
+          </a>
+        </nav>
+
+        <!-- Right: Storefront link & Logout -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <a href="/" target="_blank" class="btn-modern btn-sm-modern" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+          </a>
+          <a href="/logout" class="btn-modern btn-danger-modern btn-sm-modern">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Messages -->
+  {% if messages %}
+    <div class="container-custom" style="margin-top: 20px;">
+      {% for message in messages %}
+        <div style="padding: 14px 20px; border-radius: var(--radius-sm); margin-bottom: 12px; font-weight: 600; font-size: 0.925rem; display: flex; align-items: center; justify-content: space-between; 
+          {% if message.tags == 'success' %}background: var(--success-light); color: #065f46; border: 1px solid rgba(16,185,129,0.3);{% elif message.tags == 'error' %}background: var(--danger-light); color: #991b1b; border: 1px solid rgba(239,68,68,0.3);{% else %}background: var(--info-light); color: #1e40af; border: 1px solid rgba(59,130,246,0.3);{% endif %}">
+          <span>
+            {% if message.tags == 'success' %}<i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i>
+            {% elif message.tags == 'error' %}<i class="fa-solid fa-circle-exclamation" style="margin-right: 8px;"></i>
+            {% else %}<i class="fa-solid fa-circle-info" style="margin-right: 8px;"></i>{% endif %}
+            {{ message }}
+          </span>
+          <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: inherit; font-size: 1.1rem;">&times;</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main style="padding-top: 30px; padding-bottom: 60px;">
+    {% block content %}{% endblock content %}
+  </main>
+</body>
+</html>

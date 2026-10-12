@@ -1,0 +1,171 @@
+{% extends 'ecom/admin_base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard | NEXUS Store{% endblock %}
+
+{% block content %}
+<div class="container-custom">
+  <!-- Page Title & Quick Actions -->
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 style="font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">Executive Store Dashboard</h1>
+      <p style="color: var(--text-muted); font-size: 0.925rem;">Real-time overview of revenue, active orders, and inventory.</p>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <a href="/admin-add-product" class="btn-modern btn-primary-gradient">
+        <i class="fa-solid fa-plus"></i> Add New Product
+      </a>
+      <a href="/admin-view-booking" class="btn-modern btn-outline-modern">
+        <i class="fa-solid fa-clipboard-list"></i> All Orders
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI Metric Cards Grid -->
+  <div class="admin-metrics-grid">
+    <!-- Card 1: Revenue -->
+    <div class="metric-card" style="border-left: 4px solid var(--primary);">
+      <div>
+        <div class="metric-label">Total Revenue</div>
+        <div class="metric-value" style="color: var(--primary);">₹{{ total_revenue|default:0 }}</div>
+        <span style="font-size: 0.8rem; color: var(--success); font-weight: 600;">
+          <i class="fa-solid fa-arrow-trend-up"></i> Generated from completed orders
+        </span>
+      </div>
+      <div class="metric-icon-circle" style="background: var(--primary-light); color: var(--primary);">
+        <i class="fa-solid fa-indian-rupee-sign"></i>
+      </div>
+    </div>
+
+    <!-- Card 2: Total Orders -->
+    <div class="metric-card" style="border-left: 4px solid #06b6d4;">
+      <div>
+        <div class="metric-label">Total Orders</div>
+        <div class="metric-value">{{ ordercount|default:0 }}</div>
+        <span style="font-size: 0.8rem; color: #b45309; font-weight: 600;">
+          <i class="fa-solid fa-clock"></i> {{ pendingcount|default:0 }} Pending Approval
+        </span>
+      </div>
+      <div class="metric-icon-circle" style="background: var(--secondary-light); color: var(--secondary);">
+        <i class="fa-solid fa-box-open"></i>
+      </div>
+    </div>
+
+    <!-- Card 3: Active Customers -->
+    <div class="metric-card" style="border-left: 4px solid #10b981;">
+      <div>
+        <div class="metric-label">Registered Customers</div>
+        <div class="metric-value">{{ customercount|default:0 }}</div>
+        <span style="font-size: 0.8rem; color: var(--success); font-weight: 600;">
+          <i class="fa-solid fa-user-check"></i> Verified accounts
+        </span>
+      </div>
+      <div class="metric-icon-circle" style="background: var(--success-light); color: var(--success);">
+        <i class="fa-solid fa-users"></i>
+      </div>
+    </div>
+
+    <!-- Card 4: Products Catalog -->
+    <div class="metric-card" style="border-left: 4px solid #f59e0b;">
+      <div>
+        <div class="metric-label">Catalog Products</div>
+        <div class="metric-value">{{ productcount|default:0 }}</div>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+          Across 5 categories
+        </span>
+      </div>
+      <div class="metric-icon-circle" style="background: var(--warning-light); color: var(--warning);">
+        <i class="fa-solid fa-boxes-stacked"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Orders Table -->
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm);">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+      <h2 style="font-size: 1.35rem; font-weight: 800; letter-spacing: -0.3px;">Recent Customer Bookings & Orders</h2>
+      <a href="/admin-view-booking" style="font-size: 0.875rem; color: var(--primary); font-weight: 700;">
+        View All Orders <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+
+    {% if orders %}
+      <div class="modern-table-container">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Product</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Quick Update</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in orders %}
+              <tr>
+                <td><strong>#NX-{{ o.id }}</strong></td>
+                <td>
+                  <div style="font-weight: 600; color: var(--text-main);">{{ o.customer.get_name|default:o.customer.user.username }}</div>
+                  <small style="color: var(--text-muted); font-size: 0.775rem;">{{ o.mobile|default:o.email }}</small>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    {% if o.product.product_image %}
+                      <img src="{% static o.product.product_image.url %}" alt="" style="width: 36px; height: 36px; border-radius: var(--radius-xs); object-fit: contain; background: var(--surface-alt);">
+                    {% endif %}
+                    <span>{{ o.product.name }}</span>
+                  </div>
+                </td>
+                <td><strong>₹{{ o.product.price }}</strong></td>
+                <td>
+                  {% if o.status == 'Pending' %}
+                    <span class="status-pill status-pending">Pending</span>
+                  {% elif o.status == 'Order Confirmed' %}
+                    <span class="status-pill status-confirmed">Confirmed</span>
+                  {% elif o.status == 'Out for Delivery' %}
+                    <span class="status-pill status-out-for-delivery">Out for Delivery</span>
+                  {% elif o.status == 'Delivered' %}
+                    <span class="status-pill status-delivered">Delivered</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <!-- Quick status changer -->
+                  <div style="display: flex; gap: 6px;">
+                    {% if o.status != 'Order Confirmed' %}
+                      <a href="/quick-order-status/{{ o.id }}/Order%20Confirmed" class="btn-modern btn-sm-modern" style="background: var(--info-light); color: var(--info); font-size: 0.75rem; padding: 4px 8px;" title="Mark Confirmed">
+                        Confirm
+                      </a>
+                    {% endif %}
+                    {% if o.status != 'Delivered' %}
+                      <a href="/quick-order-status/{{ o.id }}/Delivered" class="btn-modern btn-sm-modern" style="background: var(--success-light); color: var(--success); font-size: 0.75rem; padding: 4px 8px;" title="Mark Delivered">
+                        Deliver
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; gap: 8px;">
+                    <a href="/update-order/{{ o.id }}" class="btn-modern btn-outline-modern btn-sm-modern" title="Edit Order">
+                      <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a href="/delete-order/{{ o.id }}" onclick="return confirm('Are you sure you want to delete order #NX-{{ o.id }}?')" class="btn-modern btn-danger-modern btn-sm-modern" title="Delete Order">
+                      <i class="fa-solid fa-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+        No customer orders logged yet.
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

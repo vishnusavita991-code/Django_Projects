@@ -1,0 +1,167 @@
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+
+{% block title %}NEXUS Store | Welcome {{ request.user.first_name|default:request.user.username }}{% endblock %}
+
+{% block content %}
+<div class="container-custom">
+  <!-- Member Welcome Hero -->
+  <section class="hero-banner" style="padding: 44px 40px; margin-top: 20px;">
+    <div class="hero-content" style="max-width: 720px;">
+      <div class="hero-chip">
+        <i class="fa-solid fa-crown" style="color: #fbbf24;"></i> EXCLUSIVE MEMBER PORTAL
+      </div>
+      <h1 class="hero-title" style="font-size: 2.35rem;">
+        Welcome back, {{ request.user.first_name|default:request.user.username }}!
+      </h1>
+      <p class="hero-subtitle" style="margin-bottom: 20px;">
+        Enjoy priority fulfillment, exclusive member savings, and instant order tracking with your NEXUS account.
+      </p>
+      <div class="hero-actions">
+        <a href="/my-order" class="btn-modern btn-primary-gradient">
+          <i class="fa-solid fa-box-open"></i> Track Recent Orders
+        </a>
+        <a href="/cart" class="btn-modern btn-outline-modern" style="color: white; border-color: rgba(255,255,255,0.3);">
+          <i class="fa-solid fa-cart-shopping"></i> Review Cart ({{ product_count_in_cart|default:0 }})
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catalog Section -->
+  <section id="catalogSection" style="margin-top: 36px;">
+    <div class="catalog-header">
+      <div>
+        <h2 class="catalog-title">{{ word|default:"Member Catalog & Deals" }}</h2>
+        <p class="catalog-subtitle">
+          Showing {{ products|length }} available product{{ products|length|pluralize }}
+        </p>
+      </div>
+
+      <!-- Sorting dropdown -->
+      <div>
+        <form method="get" id="filterFormCustomer" style="display: flex; gap: 10px; align-items: center;">
+          {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+          {% if query %}<input type="hidden" name="query" value="{{ query }}">{% endif %}
+          <label for="sortSelect" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Sort By:</label>
+          <select name="sort" id="sortSelect" class="sort-select-modern" onchange="document.getElementById('filterFormCustomer').submit()">
+            <option value="" {% if not selected_sort %}selected{% endif %}>Featured Products</option>
+            <option value="price_asc" {% if selected_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_desc" {% if selected_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+            <option value="rating" {% if selected_sort == 'rating' %}selected{% endif %}>Highest Rated</option>
+            <option value="newest" {% if selected_sort == 'newest' %}selected{% endif %}>Newest Additions</option>
+          </select>
+        </form>
+      </div>
+    </div>
+
+    <!-- Category Filter Chips -->
+    <div class="category-filter-chips" style="margin-bottom: 30px;">
+      <a href="/customer-home?category=All{% if selected_sort %}&sort={{ selected_sort }}{% endif %}" class="chip-btn {% if selected_category == 'All' or not selected_category %}active{% endif %}">
+        <i class="fa-solid fa-border-all"></i> All Categories
+      </a>
+      {% for cat in categories %}
+        <a href="/customer-home?category={{ cat|urlencode }}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}" class="chip-btn {% if selected_category == cat %}active{% endif %}">
+          {% if cat == 'Electronics' %}<i class="fa-solid fa-laptop"></i>
+          {% elif cat == 'Fashion' %}<i class="fa-solid fa-shirt"></i>
+          {% elif cat == 'Home & Living' %}<i class="fa-solid fa-couch"></i>
+          {% elif cat == 'Accessories' %}<i class="fa-solid fa-wallet"></i>
+          {% elif cat == 'Gadgets' %}<i class="fa-solid fa-microchip"></i>
+          {% endif %}
+          {{ cat }}
+        </a>
+      {% endfor %}
+    </div>
+
+    <!-- Product Grid -->
+    {% if products %}
+      <div class="product-grid">
+        {% for p in products %}
+          <article class="product-card">
+            <!-- Badges & Wishlist -->
+            <div class="card-badge-top-left">
+              <span class="badge-category">{{ p.category }}</span>
+              {% if p.discount_percent > 0 %}
+                <span class="badge-discount">-{{ p.discount_percent }}% OFF</span>
+              {% endif %}
+            </div>
+
+            <button class="card-wishlist-btn" onclick="toggleWishlist(this, '{{ p.name }}')" title="Save to Wishlist">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+
+            <!-- Product Image -->
+            <div class="product-image-container">
+              <a href="/product/{{ p.id }}">
+                <img src="{% static p.product_image.url %}" alt="{{ p.name }}" loading="lazy">
+              </a>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-body">
+              <div class="product-rating">
+                <span class="stars-display">
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star-half-stroke"></i>
+                </span>
+                <span class="review-count">{{ p.rating|default:"4.8" }} ({{ p.reviews_count|default:"18" }})</span>
+              </div>
+
+              <h3 class="product-title">
+                <a href="/product/{{ p.id }}">{{ p.name }}</a>
+              </h3>
+
+              <p class="product-desc">{{ p.description }}</p>
+
+              <div class="product-price-row">
+                <span class="price-current">₹{{ p.price }}</span>
+                {% if p.original_price %}
+                  <span class="price-original">₹{{ p.original_price }}</span>
+                {% endif %}
+              </div>
+
+              <div class="product-actions">
+                <a href="/add-to-cart/{{ p.id }}" class="btn-add-cart">
+                  <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                </a>
+                <button class="btn-quick-view" onclick="openQuickView('{{ p.id }}', '{{ p.name|escapejs }}', '{{ p.price }}', '{{ p.original_price|default:'' }}', '{{ p.description|escapejs }}', '{% static p.product_image.url %}', '{{ p.category }}', '{{ p.rating }}', '{{ p.reviews_count }}', '{{ p.stock }}')" title="Quick View">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 80px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 60px;">
+        <i class="fa-solid fa-magnifying-glass" style="font-size: 3rem; color: var(--text-subtle); margin-bottom: 16px;"></i>
+        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">No Products Found</h3>
+        <p style="color: var(--text-muted); margin-bottom: 24px;">No products found for your selection.</p>
+        <a href="/customer-home" class="btn-modern btn-primary-gradient">View All Items</a>
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+<script>
+  function toggleWishlist(btn, name) {
+    const icon = btn.querySelector('i');
+    if (icon.classList.contains('fa-regular')) {
+      icon.classList.remove('fa-regular');
+      icon.classList.add('fa-solid');
+      btn.classList.add('active');
+      showToast(`${name} added to your wishlist!`, 'fa-heart');
+    } else {
+      icon.classList.remove('fa-solid');
+      icon.classList.add('fa-regular');
+      btn.classList.remove('active');
+      showToast(`${name} removed from wishlist.`, 'fa-heart');
+    }
+  }
+</script>
+{% endblock %}
