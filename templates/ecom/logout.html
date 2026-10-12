@@ -1,17 +1,26 @@
 {% extends 'ecom/homebase.html' %}
 {% load static %}
+
+{% block title %}Signed Out | NEXUS Store{% endblock %}
+
 {% block content %}
-<br><br><br>
-<img src="{% static "images/logout_img.png" %}"  style="width:800px; height:100px; padding-left:400px;">
-
-<br><br><br><br><br>
-<br><br><br><br><br>
-<br><br><br>
-
-<!--
-developed By : sumit kumar
-facebook : fb.com/sumit.luv
-youtube : youtube.com/lazycoders
--->
-
+<div class="container-custom" style="padding-top: 60px; padding-bottom: 80px;">
+  <div style="max-width: 520px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 48px; text-align: center; box-shadow: var(--shadow-sm);">
+    <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 20px auto;">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    </div>
+    <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px;">Successfully Signed Out</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px;">
+      Your session has been securely closed. Thank you for shopping with NEXUS Store.
+    </p>
+    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+      <a href="/customerlogin" class="btn-modern btn-primary-gradient" style="padding: 12px 24px;">
+        <i class="fa-regular fa-user"></i> Sign In Again
+      </a>
+      <a href="/" class="btn-modern btn-outline-modern" style="padding: 12px 24px;">
+        Browse Catalog
+      </a>
+    </div>
+  </div>
+</div>
 {% endblock content %}

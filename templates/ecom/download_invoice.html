@@ -163,10 +163,12 @@
           <table>
             <tr>
               <td>
-                Product Image :<br>
-                 <img src="{% static product_image.url %}" alt="Profile Pic" height="40px" width="40px" /><br><br>
+                {% if productImage and productImage.name %}
+                  Product Image :<br>
+                  <img src="{{ productImage.path }}" alt="Product Pic" height="40" width="40" /><br><br>
+                {% endif %}
                 Product Price : <br>
-                {{productPrice}}
+                INR {{productPrice}}
               </td>
               <td>
                 Product Name: <br> {{productName}}<br><br>

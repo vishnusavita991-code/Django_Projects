@@ -1,57 +1,49 @@
 {% extends 'ecom/admin_base.html' %}
 {% load static %}
+
+{% block title %}Customer Feedbacks | NEXUS Admin{% endblock %}
+
 {% block content %}
+<div class="container-custom">
+  <div style="margin-bottom: 28px;">
+    <h1 style="font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">Customer Feedbacks & Reviews</h1>
+    <p style="color: var(--text-muted); font-size: 0.925rem;">
+      Direct thoughts, ratings, and suggestions sent by store visitors.
+    </p>
+  </div>
 
-
-<head>
-  <style media="screen">
-    .alert {
-      margin-left: 25%;
-      margin-right: 25%;
-      padding: 20px;
-      background-color: #f44336;
-      color: white;
-    }
-
-    .w3-panel p {
-      padding-top: 10px;
-    }
-
-    .closebtn {
-      margin-left: 15px;
-      color: white;
-      font-weight: bold;
-      float: right;
-      font-size: 22px;
-      line-height: 20px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .closebtn:hover {
-      color: black;
-    }
-  </style>
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-
-</head>
-<!--
-written By : sumit kumar
-facebook : fb.com/sumit.luv
--->
-
-<br><br><br><br>
-<h2 style="text-align:center; color:blue;">Feedbacks By User</h2>
-<hr>
-{%for f in feedbacks%}
-<div class="alert">
-  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-  <strong>{{f.date}} ||By : {{f.name}} </strong><br> {{f.feedback}}
+  {% if feedbacks %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+      {% for f in feedbacks %}
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                  {{ f.name|make_list|first|upper }}
+                </div>
+                <strong style="color: var(--text-main); font-size: 0.95rem;">{{ f.name }}</strong>
+              </div>
+              <span style="font-size: 0.775rem; color: var(--text-muted); background: var(--surface-alt); padding: 3px 8px; border-radius: var(--radius-full);">
+                {{ f.date }}
+              </span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.925rem; line-height: 1.6; font-style: italic;">
+              "{{ f.feedback }}"
+            </p>
+          </div>
+          <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 0.8rem; color: #10b981; font-weight: 600;">
+            <i class="fa-solid fa-circle-check"></i> Verified User Submission
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 60px 20px; text-align: center; color: var(--text-muted);">
+      <i class="fa-regular fa-comments" style="font-size: 3rem; margin-bottom: 14px; color: var(--text-subtle);"></i>
+      <h3 style="font-weight: 700; margin-bottom: 6px;">No Feedbacks Logged</h3>
+      <p>Customer feedback submissions will appear here.</p>
+    </div>
+  {% endif %}
 </div>
-{%endfor%}
-<!--
-developed By : sumit kumar
-facebook : fb.com/sumit.luv
-youtube : youtube.com/lazycoders
--->
 {% endblock content %}

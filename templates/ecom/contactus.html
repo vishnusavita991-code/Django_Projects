@@ -1,44 +1,45 @@
-<!DOCTYPE html>
+{% extends 'ecom/homebase.html' %}
 {% load static %}
-<html lang="en" dir="ltr">
+{% load widget_tweaks %}
 
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% block title %}Contact & Help Center | NEXUS Store{% endblock %}
 
-  <title>LazyCoder || sumit</title>
-
-
-</head>
-
-<body style="background-color: #B3E5FC;">
-
-  {%if request.user.is_authenticated%}
-    {% include "ecom/customer_navbar.html" %}
-  {%else%}
-    {% include "ecom/navbar.html" %}
-  {%endif%}
-
-  <center>
-    <h3 class='alert alert-success'>Send Us Your Valuable Feedback !</h3>
-
-    <form method="POST">
-      <!-- Very Important csrf Token -->
-      {% csrf_token %}
-      <div class="form-group">
-        <p>
-        <h3>{{ form.as_p }}</h3>
-        </p>
-        <br>
-        <input type="submit" value="Send Message" class='btn btn-primary btn-lg'>
+{% block content %}
+<div class="container-custom" style="padding-top: 36px; padding-bottom: 60px;">
+  <div style="max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-sm);">
+    
+    <div style="text-align: center; margin-bottom: 28px;">
+      <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 16px auto;">
+        <i class="fa-regular fa-envelope"></i>
       </div>
-    </form>
-  </center>
-  {% include "ecom/footer.html" %}
-</body>
-<!--
-developed By : sumit kumar
-facebook : fb.com/sumit.luv
-youtube : youtube.com/lazycoders
--->
+      <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px;">Get in Touch With Us</h1>
+      <p style="color: var(--text-muted); font-size: 0.925rem;">
+        Have a question about an order, shipment, or business inquiry? We're here to help!
+      </p>
+    </div>
 
-</html>
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Full Name</label>
+        {% render_field form.Name class="form-control-modern" placeholder="Your full name" required=True %}
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Email Address</label>
+        {% render_field form.Email class="form-control-modern" placeholder="email@example.com" required=True %}
+      </div>
+
+      <div class="form-group-modern">
+        <label class="form-label-modern">Message</label>
+        {% render_field form.Message class="form-control-modern" style="min-height: 120px; resize: vertical;" placeholder="Type your inquiry or message here..." required=True %}
+      </div>
+
+      <button type="submit" class="btn-modern btn-primary-gradient" style="width: 100%; padding: 14px; margin-top: 14px; font-size: 1rem;">
+        <i class="fa-solid fa-paper-plane"></i> Send Inquiry
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

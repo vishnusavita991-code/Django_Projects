@@ -1,45 +1,21 @@
-<!DOCTYPE html>
+{% extends 'ecom/homebase.html' %}
 {% load static %}
-<html lang="en" dir="ltr">
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% block title %}Message Sent | NEXUS Store{% endblock %}
 
-
-  <title>LazyCoder || sumit</title>
-  <style media="screen">
-    .jumbotron {
-      margin-bottom: 0px;
-    }
-
-    .jumbotron h1 {
-      text-align: center;
-    }
-  </style>
-
-</head>
-
-<body style="background-color: #B3E5FC;">
-
-  {% include "ecom/navbar.html" %}
-  <br><br>
-  <div class="jumbotron">
-    <h1 class="display-4">Your message sent successfully !</h1>
-    <p class="lead">We will respond to your feedback soon</p>
-    <hr class="my-4">
-    <p>Check other features of website !</p>
-    <p class="lead">
-      <a class="btn btn-primary btn-lg" href="/" role="button">HOME</a>
+{% block content %}
+<div class="container-custom" style="padding-top: 60px; padding-bottom: 80px;">
+  <div style="max-width: 520px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 48px; text-align: center; box-shadow: var(--shadow-sm);">
+    <div style="width: 72px; height: 72px; border-radius: 50%; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 2.25rem; margin: 0 auto 20px auto;">
+      <i class="fa-solid fa-paper-plane"></i>
+    </div>
+    <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 8px;">Message Dispatched!</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px;">
+      Your inquiry has been received. Our support team responds within 24 business hours.
     </p>
+    <a href="/" class="btn-modern btn-primary-gradient" style="padding: 12px 28px;">
+      Return to Home
+    </a>
   </div>
-
-  {% include "ecom/footer.html" %}
-</body>
-<!--
-developed By : sumit kumar
-facebook : fb.com/sumit.luv
-youtube : youtube.com/lazycoders
--->
-
-</html>
+</div>
+{% endblock content %}

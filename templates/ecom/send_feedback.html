@@ -1,140 +1,39 @@
-<!DOCTYPE html>
+{% extends 'ecom/homebase.html' %}
 {% load static %}
 {% load widget_tweaks %}
-<html lang="en" dir="ltr">
 
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% block title %}Share Your Feedback | NEXUS Store{% endblock %}
 
-  <title>LazyCoder || sumit</title>
-<style media="screen">
-  .form-style-1 {
-  	margin:10px auto;
-  	max-width: 400px;
-  	padding: 20px 12px 10px 20px;
-  	font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  }
-  .form-style-1 li {
-  	padding: 0;
-  	display: block;
-  	list-style: none;
-  	margin: 10px 0 0 0;
-  }
-  .form-style-1 label{
-  	margin:0 0 3px 0;
-  	padding:0px;
-  	display:block;
-  	font-weight: bold;
-  }
-  .form-style-1 input[type=text],
-  .form-style-1 input[type=date],
-  .form-style-1 input[type=datetime],
-  .form-style-1 input[type=number],
-  .form-style-1 input[type=search],
-  .form-style-1 input[type=time],
-  .form-style-1 input[type=url],
-  .form-style-1 input[type=email],
-  textarea,
-  select{
-  	box-sizing: border-box;
-  	-webkit-box-sizing: border-box;
-  	-moz-box-sizing: border-box;
-  	border:1px solid #BEBEBE;
-  	padding: 7px;
-  	margin:0px;
-  	-webkit-transition: all 0.30s ease-in-out;
-  	-moz-transition: all 0.30s ease-in-out;
-  	-ms-transition: all 0.30s ease-in-out;
-  	-o-transition: all 0.30s ease-in-out;
-  	outline: none;
-  }
-  .form-style-1 input[type=text]:focus,
-  .form-style-1 input[type=date]:focus,
-  .form-style-1 input[type=datetime]:focus,
-  .form-style-1 input[type=number]:focus,
-  .form-style-1 input[type=search]:focus,
-  .form-style-1 input[type=time]:focus,
-  .form-style-1 input[type=url]:focus,
-  .form-style-1 input[type=email]:focus,
-  .form-style-1 textarea:focus,
-  .form-style-1 select:focus{
-  	-moz-box-shadow: 0 0 8px #88D5E9;
-  	-webkit-box-shadow: 0 0 8px #88D5E9;
-  	box-shadow: 0 0 8px #88D5E9;
-  	border: 1px solid #88D5E9;
-  }
-  .form-style-1 .field-divided{
-  	width: 49%;
-  }
-
-  .form-style-1 .field-long{
-  	width: 100%;
-  }
-  .form-style-1 .field-select{
-  	width: 100%;
-  }
-  .form-style-1 .field-textarea{
-  	height: 100px;
-  }
-  .form-style-1 input[type=submit], .form-style-1 input[type=button]{
-  	background: #4B99AD;
-  	padding: 8px 15px 8px 15px;
-  	border: none;
-  	color: #fff;
-  }
-  .form-style-1 input[type=submit]:hover, .form-style-1 input[type=button]:hover{
-  	background: #4691A4;
-  	box-shadow:none;
-  	-moz-box-shadow:none;
-  	-webkit-box-shadow:none;
-  }
-  .form-style-1 .required{
-  	color:red;
-  }
-</style>
-
-</head>
-
-<body style="background-color: #B3E5FC;">
-
-  {%if request.user.is_authenticated%}
-    {% include "ecom/customer_navbar.html" %}
-  {%else%}
-    {% include "ecom/navbar.html" %}
-  {%endif%}
-
-  <center>
-    <h3 class='alert alert-success'>Send Us Your Valuable Feedback !</h3>
-
+{% block content %}
+<div class="container-custom" style="padding-top: 36px; padding-bottom: 60px;">
+  <div style="max-width: 580px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-sm);">
+    
+    <div style="text-align: center; margin-bottom: 28px;">
+      <div style="width: 56px; height: 56px; border-radius: 50%; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 16px auto;">
+        <i class="fa-regular fa-comment-dots"></i>
+      </div>
+      <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px;">Your Feedback Matters</h1>
+      <p style="color: var(--text-muted); font-size: 0.925rem;">
+        Help us improve your shopping experience, product selection, or service delivery.
+      </p>
+    </div>
 
     <form method="post">
       {% csrf_token %}
-    <ul class="form-style-1">
-        <li>
-            <label>Name <span class="required">*</span></label>
-            {% render_field feedbackForm.name class="field-long"  %}
+      <div class="form-group-modern">
+        <label class="form-label-modern">Your Name</label>
+        {% render_field feedbackForm.name class="form-control-modern" placeholder="Full name or alias" value=request.user.get_full_name|default:request.user.username required=True %}
+      </div>
 
-        </li>
+      <div class="form-group-modern">
+        <label class="form-label-modern">Feedback / Suggestions</label>
+        {% render_field feedbackForm.feedback class="form-control-modern" style="min-height: 120px; resize: vertical;" placeholder="Tell us what you liked or what we can do better..." required=True %}
+      </div>
 
-        <li>
-            <label>Your Feedback <span class="required">*</span></label>
-            {% render_field feedbackForm.feedback id="field5" class="field-long field-textarea"  %}
-
-        </li>
-        <li>
-            <input type="submit" value="Send Feedback" />
-        </li>
-    </ul>
+      <button type="submit" class="btn-modern btn-primary-gradient" style="width: 100%; padding: 14px; margin-top: 14px; font-size: 1rem;">
+        <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+      </button>
     </form>
-
-
-  </center>
-  {% include "ecom/footer.html" %}
-</body>
-<!--
-developed By : sumit kumar
-facebook : fb.com/sumit.luv
-youtube : youtube.com/lazycoders
--->
-
-</html>
+  </div>
+</div>
+{% endblock content %}
